@@ -1,0 +1,1 @@
+curl -sS -X POST     "https://brave-coast-06100290f.7.azurestaticapps.net/api/tasks/gv-is4-search/executions"     -H "Content-Type: application/json"     -d '{"parameters": {"query": "Alzheimer imaging biomarkers", "corpus": "datasets", "orgId": "stage"}}
