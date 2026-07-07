@@ -5,3 +5,12 @@ It is important to also pass default if smart assist is not enabled since the Wo
 So, for example:
 https://workflows-stage.grip-research.org/dashboard?workspace-uuid=%3CWORKSPACE_UUID%3E&modules-page=is-sa would launch the Workflows with the smart assist UI
 https://workflows-stage.grip-research.org/dashboard?workspace-uuid=%3CWORKSPACE_UUID%3E&modules-page=default would launch the Workflows without the smart assist UI
+
+
+          "parameters": {
+            "query": "amyloid biomarkers longitudinal",
+            "corpus": "datasets",
+            "orgId": "prod",
+            "filters": "{}",
+            "page": "{\"top\": 20, \"skip\": 0}"
+          }
