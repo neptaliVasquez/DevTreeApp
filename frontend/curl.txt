@@ -168,7 +168,9 @@ curl -s -X POST \
 
 
 
-
+Core_DatasetDiscovery:SmartAssistTokenUrl	https://i16s-gv-stg-keycloak.greenflower-1c0e8083.eastus2.azurecontainerapps.io/realms/i16s-console/protocol/openid-connect/token
+Core_DatasetDiscovery:SmartAssistClientId	gv-tasks-svc
+Core_DatasetDiscovery:SmartAssistClientSecret	01W557bl0HVupqJJE8Si6SgmrsLqtt3x
 
 
 
