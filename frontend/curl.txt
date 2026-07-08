@@ -1,16 +1,168 @@
-Hey Neptali, you can simply pass the query param modules-page along with workspace-uuid. The value for modules-page must be:
-is-sa if smart assist is to be enabled
-default if smart assist is to be disabled
-It is important to also pass default if smart assist is not enabled since the Workflows remembers the last UI change.
-So, for example:
-https://workflows-stage.grip-research.org/dashboard?workspace-uuid=%3CWORKSPACE_UUID%3E&modules-page=is-sa would launch the Workflows with the smart assist UI
-https://workflows-stage.grip-research.org/dashboard?workspace-uuid=%3CWORKSPACE_UUID%3E&modules-page=default would launch the Workflows without the smart assist UI
+    headers: dict[str, str] = {"Content-Type": "application/json"}
+
+    access_token_cache = IsSaAccessTokenCache()
+    access_token = access_token_cache.get_or_refresh()
+    if access_token is not None:
+        headers["Authorization"] = f"Bearer {access_token}"
+
+    response = requests.post(
+        url=url,
+        json=data,
+        headers=headers,
+        timeout=settings.REQUESTS_RESPONSE_TIMEOUT_IS_SA,
+    )
+
+    if (
+        response.status_code == status.HTTP_401_UNAUTHORIZED
+        or response.status_code == status.HTTP_403_FORBIDDEN
+    ):
+        # Refresh the access token and try again.
+        access_token_cache.refresh()
+        access_token = access_token_cache.access_token
+        if access_token is not None:
+            headers["Authorization"] = f"Bearer {access_token}"
+            response = requests.post(
+                url=url,
+                json=data,
+                headers=headers,
+                timeout=settings.REQUESTS_RESPONSE_TIMEOUT_IS_SA,
+            )
 
 
-          "parameters": {
-            "query": "amyloid biomarkers longitudinal",
-            "corpus": "datasets",
-            "orgId": "prod",
-            "filters": "{}",
-            "page": "{\"top\": 20, \"skip\": 0}"
-          }
+
+
+
+
+
+
+
+import requests
+from api.common.exceptions import (
+    IsSaClientAuthenticationFailed,
+    IsSaClientCredentialsRejected,
+)
+from api.common.utils import get_response_json
+from django.conf import settings
+from django.core.cache import caches
+from django.core.cache.backends.base import BaseCache
+from rest_framework import status
+
+
+class IsSaAccessTokenCache:
+    """A cached access token for the Smart Assist API."""
+
+    def __init__(
+        self,
+        *,
+        cache_name: str = "default",
+        cache_key: str = "is_sa_access_token",
+        login_url: str = settings.IS_SA_LOGIN_URL,
+        client_id: str = settings.IS_SA_CLIENT_ID,
+        client_secret: str = settings.IS_SA_CLIENT_SECRET,
+    ) -> None:
+        self.cache_name = cache_name
+        self.cache_key = cache_key
+        self.login_url = login_url
+        self.client_id = client_id
+        self.client_secret = client_secret
+
+    @property
+    def cache(self) -> BaseCache:
+        """The cache that houses the access token."""
+        return caches[self.cache_name]
+
+    @property
+    def access_token(self) -> str | None:
+        """The cached access token, or `None` if it is not present."""
+        return self.cache.get(self.cache_key)
+
+    def _set_access_token(self, access_token: str, timeout: int) -> None:
+        """Set the access token in the cache with some timeout."""
+        self.cache.set(self.cache_key, access_token, timeout=timeout)
+
+    def refresh(self, *, default_timeout: int = 300) -> bool:
+        """
+        Refresh the access token by logging in to the Smart Assist API.
+
+        The `default_timeout` argument determines the cache expiration time to use
+        in case the expiration time returned by the API could not be extracted.
+        """
+        response = requests.post(
+            self.login_url,
+            {
+                "grant_type": "client_credentials",
+                "client_id": self.client_id,
+                "client_secret": self.client_secret,
+            },
+            headers={
+                "Content-Type": "application/x-www-form-urlencoded",
+            },
+        )
+
+        if (
+            response.status_code == status.HTTP_401_UNAUTHORIZED
+            or response.status_code == status.HTTP_403_FORBIDDEN
+        ):
+            raise IsSaClientCredentialsRejected(
+                data={"reason": response.reason.lower()}
+            )
+
+        elif not response.ok:
+            raise IsSaClientAuthenticationFailed(
+                data={"reason": response.reason.lower()}
+            )
+
+        response_data = get_response_json(response)
+
+        access_token = response_data.get("access_token")
+        if access_token is None:
+            return False
+
+        expires_in = response_data.get("expires_in", default_timeout)
+
+        try:
+            expires_in = int(expires_in)
+
+        # ValueError handles malformed strings
+        # TypeError handles unexpected types
+        except (ValueError, TypeError):
+            expires_in = default_timeout
+
+        self._set_access_token(access_token, expires_in)
+        return True
+
+    def get_or_refresh(self, *, default_timeout: int = 300) -> str | None:
+        """
+        Get the cached access token, or refresh it if not present.
+
+        If a refresh is performed, the `default_timeout` argument determines the
+        cache expiration time to use in case the expiration time returned by the
+        API could not be extracted.
+        """
+        access_token = self.access_token
+        if access_token is not None:
+            return access_token
+
+        refreshed = self.refresh(default_timeout=default_timeout)
+        if not refreshed:
+            return None
+
+        return self.access_token
+
+
+
+{ "client_id": "gv-tasks-svc", "client_secret": "01W557bl0HVupqJJE8Si6SgmrsLqtt3x", "grant_type": "client_credentials", "token_endpoint": "https://i16s-gv-stg-keycloak.greenflower-1c0e8083.eastus2.azurecontainerapps.io/realms/i16s-console/protocol/openid-connect/token%22 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
