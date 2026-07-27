@@ -180,6 +180,25 @@ Core_DatasetDiscovery:SmartAssistClientSecret	01W557bl0HVupqJJE8Si6SgmrsLqtt3x
 https://teams.microsoft.com/l/meetup-join/19%3ameeting_Yzg5M2FhNzUtZWZjYi00YWNjLWE0MDgtMWQ5MGQwY2IwZWRm%40thread.v2/0?context=%7b%22Tid%22%3a%222bf9b32e-bca7-427c-a90d-c2b53520a7ae%22%2c%22Oid%22%3a%220ac7ee45-a691-4706-ae23-7a0d7567df48%22%7d
 
 
+I tried to simulate various cases for the fixes:
+ 
+#	Query shape	B/row	50 MB + 400k (before)	50 MB + 30k (change 1)	28 MiB byte ceiling (see below)	Reduction rescues? (change 2)
+1	
+2t × 222c, 10M
+	7,552	2,430 → 18.4 MiB ✅	2,430 → 18.4 ✅ no change	2,430 → 18.4 ✅	n/a — never fires
+2	1t × 222c, 10M	7,552	4,860 → 36.7 ❌ 32 MB	4,860 → 36.7 ❌ clamp misses	3,888 → 28.0 ✅	✅ 1 retry → 18.4
+3	1t × 200c (measured probe)	6,701	5,477 → 35.0 ❌ matches log	5,477 → 35.0 ❌	4,381 → 28.0 ✅	✅
+4	1t × ~35c	1,220	30,082 → 35.0 ❌	30,000 → 34.9 ❌ knife-edge	24,065 → 28.0 ✅	✅
+5	1t × ~20c	700	52,429 → 35.0 ❌	30,000 → 20.0 ✅ fixed	41,943 → 28.0 ✅	✅
+6	1t × ~10c, 10M	350	104,857 → 35.0 ❌	30,000 → 10.0 ✅ but 334 cycles (was 96)	83,886 → 28.0 ✅ 120 cycles	✅
+7	2t × 10c, 10M	350	52,428 → 17.5 ✅ 96 cycles	30,000 → 10.0 ✅ 167 cycles ⚠️ regression	52,428 → 17.5 ✅ 96 cycles	n/a
+8	4t × 222c, 10M	7,552	1,215 → 9.2 ✅	1,215 → 9.2 ✅	1,215 → 9.2 ✅	n/a
+9	User limit: 20000, 1t × 222c	7,552	skip-pagination → 144 MiB ❌	skip-pagination → 144 MiB ❌ unchanged	❌ unless ceiling also gates this path	❌ outside _paginate_pages
+10	User limit: 50000, 1t × 222c	7,552	skip → 360 MiB ❌	paginates → 4,860 → 36.7 ❌ still	3,888 → 28.0 ✅	✅
+11	where: + no user limit	any	no limit at all → whole table in 1 row ❌	❌ unchanged	❌	❌ outside the loop (L517)
+12	Trial query errors → cap returned raw	7,552	400,000 rows → 2.8 GiB ❌	30,000 → 216 MiB ❌ (wide) / ✅ (≤1.1k B/row)	bounded ✅	✅
+13	150 MB budget, 2t × 222c (reverted plan)	7,552	7,290 → 52.5 ❌ cycle 1	same ❌	—	✅ but 3 retries
+
 
 
 
