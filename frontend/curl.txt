@@ -179,9 +179,31 @@ Core_DatasetDiscovery:SmartAssistClientSecret	01W557bl0HVupqJJE8Si6SgmrsLqtt3x
 
 https://teams.microsoft.com/l/meetup-join/19%3ameeting_Yzg5M2FhNzUtZWZjYi00YWNjLWE0MDgtMWQ5MGQwY2IwZWRm%40thread.v2/0?context=%7b%22Tid%22%3a%222bf9b32e-bca7-427c-a90d-c2b53520a7ae%22%2c%22Oid%22%3a%220ac7ee45-a691-4706-ae23-7a0d7567df48%22%7d
 
-
-Neptali Vasquez, The fix for #9 is — the pre-flight page-size estimate (columns × 34 B × limit vs 33.55 MB), rejecting with a specific message like "20,000 rows × 222 columns exceeds Athena's 32 MB page limit; use limit ≤ 4,400 or fewer columns."
-
+login to fdsa-support and run a # df
+root@fdsa-support-svr-carlos-02:/var/www/federated-data-sharing-appliance-releases/working# df
+Filesystem     1K-blocks     Used Available Use% Mounted on
+/dev/root      128917488 51417092  77484012  40% /
+tmpfs            8186720        0   8186720   0% /dev/shm
+tmpfs            3274692     2208   3272484   1% /run
+tmpfs               5120        0      5120   0% /run/lock
+efivarfs          131072       32    131036   1% /sys/firmware/efi/efivars
+/dev/sda16        901520   119060    719332  15% /boot
+/dev/sda15        106832     6250    100582   6% /boot/efi
+/dev/sdb1       32845584       28  31151556   1% /mnt
+overlay        128917488 51417092  77484012  40% /var/lib/docker/overlay2/099098c10d08934fc83bce53ca4f78103075b03c3a943db2c4431e5155924fab/merged
+tmpfs            1637344       12   1637332   1% /run/user/1000
+overlay        128917488 51417092  77484012  40% /var/lib/docker/overlay2/e4cb01e42d1f5221b33bcd9dea545c97bd486fb2e11580b392e9785d10d6bbd4/merged
+overlay        128917488 51417092  77484012  40% /var/lib/docker/overlay2/7f9b84d581e489780c3e2e965dae860b858288bdba534143b58b5bf388d98611/merged
+overlay        128917488 51417092  77484012  40% /var/lib/docker/overlay2/6dea7c7afd91b6ccdbe226996112467e881b15de313f7f253d3f81c7051e28ac/merged
+overlay        128917488 51417092  77484012  40% /var/lib/docker/overlay2/032a60cbb4182b2ca5ef2e2e4c0eacf71b0fb25ac94c82624508fb8d2a1916c3/merged
+overlay        128917488 51417092  77484012  40% /var/lib/docker/overlay2/ea00420aa59b68287460ec6dd10e095ccaafec9fa18cd8ae33da367401103b9b/merged
+overlay        128917488 51417092  77484012  40% /var/lib/docker/overlay2/84b392399fd6d292e53cc5b75a6d67f070776961a2dd5254406209703f67b419/merged
+overlay        128917488 51417092  77484012  40% /var/lib/docker/overlay2/4477f812747d495d055e1b975a430ccd829f4a990bfd0234331e0c8c693b039c/merged
+overlay        128917488 51417092  77484012  40% /var/lib/docker/overlay2/241a700f558c32e1335dbb729140096a1382dfd41d4f195595faf2117c1347eb/merged
+overlay        128917488 51417092  77484012  40% /var/lib/docker/overlay2/c75a537914e5b342cedbc1e9db37526e556852e08014abc81cc2dba3cb333fd9/merged
+overlay        128917488 51417092  77484012  40% /var/lib/docker/overlay2/f7e92bec79b846b088588b5316b0caedd7dad1ebf8f344c4628d5518654b68ac/merged
+overlay        128917488 51417092  77484012  40% /var/lib/docker/overlay2/648c7fdd920db8d426b2c30cd15f92de6bf6925c87b08e21d5d938b01493908b/merged
+overlay        128917488 51417092  77484012  40% /var/lib/docker/overlay2/5adf55a0b3b30f065964d77e57dc2ef337fda451fd7a8c2ed8e40b3ed7268e9c/merged
 
 
 
