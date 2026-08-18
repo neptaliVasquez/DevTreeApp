@@ -216,5 +216,11 @@ Multi branding call
 https://teams.microsoft.com/meet/440892019519814?p=24PbUukPNKFBZQ6kXD
 
 
+ Github:
+ git log origin/main --author="Lawrence Setien" -E --grep='\(#[0-9]+\)$' --since="2026-06-01 00:00:00" --until="2026-07-07 23:59:59" --pretty=format:'%ad  %s' --date=short
+ 
+ Azure Devops:
+ git log origin/main --author="Lawrence Setien" -E --grep='^Merged PR [0-9]+:' --since="2026-06-01 00:00:00" --until="2026-07-07 23:59:59" --pretty=format:'%ad  %s' --date=short
+
 
 
