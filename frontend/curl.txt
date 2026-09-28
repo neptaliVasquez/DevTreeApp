@@ -1,7 +1,1 @@
-1) The DCC info needs to show up in the dataset general info for Owners and Researchers. 
-2) Dataset reg to DCC needs to happen on Publish to Catalog (Not save as draft)
-3) No need to run verify workspace on DAR approval. (But it causes no issue.)
-4) When a DAR is approved and there is a 3rd party airlock approver, that user needs to get an invite (email) to the workspace where they are an approver.
-5) When a 3rd party airlock approver logs into a workspace, they should only see airlocks to approve or deny. (we need to verify this happens, or fix it.)
-(what if a user has more than one role?)
-6) On an airlock, we need to verify the workflow: a) workspace owner, (Status changes to: "Pending 3rd Party"  b) 3rd party reviewers. (They need to get an email as well to review) c) approved.  d) Then requestor gets the email to download. (we need to verify or fix this.)
+The deploy failed because gde-1.5.55 was tagged after I ran grip-publish, so GitVersion now works out a new version (1.5.56-…) that has no images built yet. I'm re-running grip-publish on the same commit, then the deploy.
