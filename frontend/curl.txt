@@ -1,1 +1,1 @@
-The deploy failed because gde-1.5.55 was tagged after I ran grip-publish, so GitVersion now works out a new version (1.5.56-…) that has no images built yet. I'm re-running grip-publish on the same commit, then the deploy.
+IxSjPDpIDkjaKKnmqMwLHl4jJ7uYqe
