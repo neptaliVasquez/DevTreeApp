@@ -1,4 +1,1 @@
-i have verified the PR for dev -> stage 
-and approved the PR
-Going forward any additional changes deploy to stage please chery pick the dev commit and raise the PR against the stage branch this is how we are doing the dev to stage code merge
- 
+can you please generate a PRD based on the implementation that was made 
