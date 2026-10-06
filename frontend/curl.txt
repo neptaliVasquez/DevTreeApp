@@ -1,1 +1,2 @@
-can you please generate a PRD based on the implementation that was made 
+One of the dev partners has two Azure Dev Subscriptions and they are asking if DIS can be deployed into both subscriptions. I'm sure it;s technically possible, but it would mean that we have to update our pipeline when we deploy to Dev. But also DIS has configurations in it, and would having two more Dev environments cause issues with deploying to multiple environments? Then we need to fully document how to deploy DIS in Dev. Do we have the docs on this? Are they up to date?
+ 
