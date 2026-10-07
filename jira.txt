@@ -1,26 +1,53 @@
 [Catalog] Sage sync that waits for a study's file list so that researchers can keep requesting access to Sage datasets that have data
 
 Environment:
-Prod, ADWB tenant (discover.alzheimersdata.org). Service: Catalog Dataset Discovery Service, SAGE syndication job calling DIS dis-prod. The defect is in the code for every environment. Workspace and browser: not applicable (background sync, daily 03:00 UTC).
+Prod, ADWB tenant (discover.alzheimersdata.org). Service: Catalog Dataset Discovery Service, SAGE syndication job calling DIS dis-prod. Both problems are in the code for every environment. Workspace and browser: not applicable (background sync, daily 03:00 UTC).
 
 Steps to reproduce:
+Problem A, a file list that is not ready is read as empty:
 1. Run the SAGE sync while DIS needs more than 5 seconds to build a study's file list, or after a DIS restart. DIS then answers GET /api/dis/v1/catalog/metadata/status with HTTP 202 and no "files".
 2. Let the sync finish and open that dataset in the catalog.
 
+Problem B, nobody is told when a Sage entry stops arriving:
+1. Have a published Sage dataset in the Catalog whose study is not in the list DIS returns. Today that is ADMC_ADNI_NightingaleNMR, which is no longer in the Synapse studies table (syn17083367).
+2. Let the nightly SAGE sync run.
+
 Expected:
-HTTP 202 means "not ready". The Catalog retries, and if the list is still not ready it skips the study for that night and leaves the existing dataset unchanged.
+A. HTTP 202 means "not ready". The Catalog retries, and if the list is still not ready it skips the study for that night and leaves the existing dataset unchanged.
+B. After each SAGE sync, the Catalog emails a configured list of recipients the Sage datasets that are published in the Catalog but were not in that night's feed from DIS, so they can be removed by hand.
+- Each entry shows name, acronym, catalog ID, Synapse ID and whether it has a Request access button.
+- The email repeats each night until the entries are removed.
+- No email is sent when there are no such entries.
+- No email is sent when the sync failed or DIS returned no studies, so a broken night cannot produce a "remove everything" list.
+- Recipients are configurable per environment.
 
 Actual:
-The Catalog reads the 202 as an empty file list. A new dataset is published with no dataLink and no Request access button. An existing dataset has all its attributes replaced, so its dataLink and its permission entry on the storage container are removed; the next successful sync creates a new container.
+A. The Catalog reads the 202 as an empty file list. A new dataset is published with no dataLink and no Request access button. An existing dataset has all its attributes replaced, so its dataLink and its permission entry on the storage container are removed; the next successful sync creates a new container.
+B. The entry stays published and unchanged, with its Request access button if it had one. Nobody is notified.
 
 Evidence:
+Problem A:
 - DataInteropServiceClient.GetMetadataStatusAsync has no 202 handling. GetStudiesStatusAsync, in the same file, throws a retryable ServerErrorException on 202.
 - DataInteropServiceConnector.GetDataDictionaries waits 5 seconds, then returns metadataResult?.Files?.FileList ?? []. Its Retry helper only retries on ServerErrorException.
 - SyndicationProcessor.CreateAndUploadDataPackage sets no dataLink when the file list is empty.
 - CatalogueEntity.UpdateAttributes replaces the whole attribute set. SyndicationImportService.ProcessPublishDataLinkAsync removes the container permission when the previous dataLink exists and the new one is null.
 - dis-prod console logs, 14 days to 2026-10-07: catalog/metadata/status returned 200 about 2,000 times and 202 a few times.
 - Found by code review. No affected dataset has been identified yet.
-- No correlation ID available.
+
+Problem B:
+- SyndicationImportService matches on externalId and only creates or updates. Nothing removes or flags a Sage entry that stops arriving.
+- Already stale today: four datasets are published with a Request access button but are no longer in the Synapse studies table.
+  - ADMC_ADNI_NightingaleNMR (9225426c-093f-4c9a-a938-7f41ce08e57a)
+  - ADMC_ADNI_BakerLipidomics (15f74016-0dac-4517-9ca1-03b235869a48)
+  - ADMC_ADNI_UHawaiiGutMetabolites (20da65ab-f121-45d7-bb6f-51092e16fc44)
+  - ADMC_ADNI_Biocrates_MxP_Q500 (4e126322-558e-43fa-9097-c769b4a75771)
+- Will become stale: Jax.IU.Pitt_Verubecestat_5XFAD (syn21863375, catalog ID 8aefb85b-dd35-4254-934b-799d3f30feae) has 30 files in Synapse snapshot 73 and none in snapshot 88. It has a Request access button today and will keep it after DIS stops sending it.
+- Measured in prod on 2026-10-07 16:43 UTC with POST /dsds/api/v1/entities/datasets?catalogName=SAGE, logged in: 199 Sage datasets, 61 with no dataLink.
+- Scale once the DIS fix is live on snapshot 88: about 37 Sage entries will be in the Catalog but not in the feed (30 with no files in any snapshot, 2 with no files in snapshot 88, the 4 stale ones and the one above).
+- The repo already has a notification module (GRIP.Common.Notification) and scheduled email reports (KeycloakRegisteredUsersReport, SubmitAccessRequestReminder), which may be reusable. Not reviewed in detail.
+
+No correlation ID available.
+
 
 
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
