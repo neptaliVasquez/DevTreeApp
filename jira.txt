@@ -1,0 +1,32 @@
+format:
+ 
+4.1 Title
+ 
+Plain Text
+[<Component>] <capability> so that <who> can <do what>
+ 
+ 
+ 
+Same bracket syntax as epics, so one check covers every work type — but a different vocabulary inside it. At epic level the bracket is the reported feature name; below epic level it is the component.
+The component set is closed:
+Product surfaces — Workspaces · Catalog · Workflows · SmartAssist · Chatbot · AIApps · Airlock · DAR · Modules
+Layers — UI · API · Infra · DevOps · Security · Docs
+Use the most specific product surface that applies. Fall back to a layer only when none does. A front-end defect on the Requests screen is [Workspaces], not [UI] — [UI] is for work that belongs to no product, like removing stale config files.
+Adding a component is a change to this document, not something done in a title field.
+Good
+[Workspaces] Refresh control on the Requests screen so researchers can see current request status
+Bad
+Missing refresh option on request screen
+The second is written from the gap rather than from the user. Name who the work is for and what they get.
+Task and Spike titles take no "so that" clause — that work has no external beneficiary. [DevOps] Fix lint errors blocking the CI lint step.
+4.6 Bug description
+ 
+Plain Text
+Environment:
+Dev / Stage / Prod, tenant, workspace, browser
+Steps to reproduce:
+Expected:
+Actual:
+Evidence:
+Screenshot, log excerpt, correlation ID
+ 
