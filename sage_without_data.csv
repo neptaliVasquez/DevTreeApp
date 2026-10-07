@@ -1,0 +1,62 @@
+group,catalog_id,acronym,name,synapse_id,files_v73,files_v88,files_current
+A: no files in any Synapse snapshot,27e3c1e2-9082-4da3-887d-5b2a251f7831,AGMP_MIND,The Mediterranean–DASH Intervention for Neurodegenerative Delay (AGMP_MIND) study,syn53239120,0,0,0
+A: no files in any Synapse snapshot,62a0ea1f-7cae-4f11-b700-6f34d9bb0936,Agora,Agora Data Processing,syn13363442,0,0,0
+A: no files in any Synapse snapshot,8550f520-4b16-47b6-b7cb-0fb68af2526c,ATP6V1A_kd,The ATP6V1A knockdown in hIPSC neurons (ATP6V1A_kd) study,syn52201354,0,0,0
+A: no files in any Synapse snapshot,8ad8f97d-5b6a-4f66-a6c3-9e4d738c0b09,AUSBB,WashingtonUniSaintLouis_Harari_AUSBB_version1,syn69831812,0,0,0
+A: no files in any Synapse snapshot,d846c41f-74f6-4800-8842-ee8b913b7824,Broad-Rush-Columbia Nominated Targets for Agora,Broad-Rush-Columbia Nominated Targets for Agora,syn17008059,0,0,0
+A: no files in any Synapse snapshot,ee1f6ca9-80a3-4b81-ae89-e9a44a7aa8a0,Chang Lab Nominated Targets for Agora,ASU's Chang Lab Nominated Targets for Agora,syn18358612,0,0,0
+A: no files in any Synapse snapshot,bb194c46-9138-4077-a39f-926a4a795fb5,CLEAR-AD,CLEAR-AD,syn74929443,0,0,0
+A: no files in any Synapse snapshot,417ffb87-3d42-48f0-9803-8310b7ec45d5,CLEAR-AD_Lipidomics,CLEAR-AD Lipidomics (CLEAR-AD_Lipidomics) Study,syn75302160,0,0,0
+A: no files in any Synapse snapshot,5023c6a5-6a9b-48c9-9bb5-35aadb1320ff,Duke Nominated Targets for Agora,Duke Nominated Targets for Agora,syn17008060,0,0,0
+A: no files in any Synapse snapshot,d3023a58-3526-4a54-bf94-208f8471b34b,Emory Nominated Targets for Agora,Emory Nominated Targets for Agora,syn17008058,0,0,0
+A: no files in any Synapse snapshot,ec88cd44-334b-4774-823b-1590f30c2dff,FunGen,The Functional Genomic Dissection of Alzheimer’s Disease in Humans and Drosophila Models study (FunGen),syn69952803,0,0,0
+A: no files in any Synapse snapshot,465787a8-2f02-44ea-8adb-d4b18449b08e,iNeuron_shRNA_transcriptome,TREAT-AD_iNeuron_shRNA_transcriptome_study_1,syn70991365,0,0,0
+A: no files in any Synapse snapshot,8a138303-5d41-4d17-860c-3e3e55eb155a,iNiAstshRNA,The Targeting of LOAD candidate genes via shRNA in human neurons and astrocytes Study,syn52167912,0,0,0
+A: no files in any Synapse snapshot,f1222dde-11ae-45ce-8c99-265c44d1f886,Jax-VUMC Resilience Nominated Targets for Agora,JAX-VUMC-UW Resilience Nominated Targets for Agora,syn25454171,0,0,0
+A: no files in any Synapse snapshot,82f61570-05aa-41dc-844f-9a9690a53967,Jax.IU.Pitt_Aducanumab_5xFAD,The Jax.IU.Pitt_Aducanumab_5xFAD Study,syn73623346,0,0,0
+A: no files in any Synapse snapshot,90652574-ecdf-421b-a320-4b87c1efc2c3,Jax.IU.Pitt_LOAD2.Abca7,The Jax.IU.Pitt_LOAD2.Abca7 Study (Jax.IU.Pitt_LOAD2.Abca7),syn69969808,0,0,0
+A: no files in any Synapse snapshot,3f7aea35-473f-40a9-897e-a7d4d36257b8,Jax.IU.Pitt_LOAD2.Mthfr,The Jax.IU.Pitt_LOAD2.Mthfr Study (Jax.IU.Pitt_LOAD2.Mthfr),syn69974024,0,0,0
+A: no files in any Synapse snapshot,9658f49c-6de3-43ef-b39a-0ea26071c5ad,Jax.IU.Pitt_LOAD2.Plcg2-M28L,The Jax.IU.Pitt_LOAD2.Plcg2-M28L Study (Jax.IU.Pitt_LOAD2.Plcg2-M28L),syn71305907,0,0,0
+A: no files in any Synapse snapshot,fc52a6d4-d21a-4adb-a1bc-a97a2532acc9,JAX.IU.UO.AllenInstituteWSB.AD.VCID,The JAX.IU.UO.AllenInstituteWSB.AD.VCID Study ,syn75297326,0,0,0
+A: no files in any Synapse snapshot,093f2140-d6c7-45b3-af11-24651d42d5a0,Mayo Nominated Targets for Agora,Mayo Nominated Targets for Agora,syn53166082,0,0,0
+A: no files in any Synapse snapshot,61ff98d9-f8c3-448e-9a00-37d727092779,Mayo-UFL-ISB Nominated Targets for Agora,Mayo-UFL-ISB Nominated Targets for Agora,syn17008061,0,0,0
+A: no files in any Synapse snapshot,4b0e6d55-035c-445d-8477-d75439cad5bd,MSSM Nominated Targets for Agora,MSSM Nominated Targets for Agora,syn17008057,0,0,0
+A: no files in any Synapse snapshot,509094f1-7333-4131-9588-92e46c9cef2d,NPS_multiomics,A brain multi-omic approach to identify key molecular drivers of neuropsychiatric symptoms in Alzheimer’s dementia (NPS_multiomics),syn75267224,0,0,0
+A: no files in any Synapse snapshot,de027041-903a-4fca-a40d-dd747f8a504c,PanNDA,Pan-neurodegeneration proteomics reveals disease subtypes and molecular signatures (PanNDA),syn77150245,0,0,0
+A: no files in any Synapse snapshot,dead1250-ad18-4a15-874f-391c378dae57,QuantBrainProteome_AD.PD,The Global quantitative analysis of the human brain proteome in AD and PD (QuantBrainProteome_AD.PD) Study,syn25386505,0,0,0
+A: no files in any Synapse snapshot,8c022105-dc29-4ef5-ac30-fc929236fdbd,Somatic_Mutation_Analysis_AD,The somatic mutation analysis of Alzheimers disease (Somatic_Mutation_Analysis_AD),syn75266321,0,0,0
+A: no files in any Synapse snapshot,b4644de2-aa11-4ad6-ba09-4a80262ad5e0,T Cell_AD,The Investigation of T Cell-induced Neuroinflammation in Alzheimer's Disease Study (T Cell_AD),syn68143561,0,0,0
+A: no files in any Synapse snapshot,b3f6f0cc-aaed-466c-949d-414436b42c8e,TREATAD_BV2,TREAT-AD_BioHyV_Study,syn70984637,0,0,0
+A: no files in any Synapse snapshot,c30c1715-322e-42cb-a66a-b1a5d9c8abe9,Trisomy21iN,The Contributions of APP and DYRK1A to dysregulated neurobiology in human trisomy 21 iPSC-derived neurons Study,syn52159903,0,0,0
+A: no files in any Synapse snapshot,d3dd1f12-94d4-4648-8192-798656e09682,UCI_MAD1_MAD2,The UCI_MAD1_MAD2 Study (UCI_MAD1_MAD2),syn77123417,0,0,0
+B: has files in the latest Synapse snapshot,4ee08cd3-5bd9-488d-ab08-d122818ee203,ADKP_Metadata_Harmonization_Study,The AD Knowledge Portal Metadata Harmonization Study (ADKP_Metadata_Harmonization_Study),syn70781457,0,12,12
+B: has files in the latest Synapse snapshot,418c2821-eced-4c45-86cb-9b6356e8b21e,ADMC_Longitudinal_ADNI_Metabolomics,The Alzheimer's Disease Metabolomics Consortium Longitudinal Alzheimer’s Disease Neuroimaging Initiative Metabolomics (ADMC_Longitudinal_ADNI_Metabolomics) Study,syn70524711,0,25,25
+B: has files in the latest Synapse snapshot,1ced7f70-f451-4be4-902e-84bf1ba13889,AGMP_ADRC,ADRC Study to Define a Role for the Gut Microbiome and Metabolome in Alzheimer’s Disease (AGMP_ADRC),syn64959226,0,19,19
+B: has files in the latest Synapse snapshot,dd28e796-f743-4e83-b96d-5545656e5e27,AGMP_MARS_WISCONSIN,The Microbiome in Alzheimer’s Risk Study (MARS) ,syn53071655,0,18,18
+B: has files in the latest Synapse snapshot,79c4e554-fcc0-4793-9641-511d5f07dd99,AGMP_US_POINTER,Alzheimer Gut Microbiome Project (AGMP) POINTER Microbiome Ancillary Study,syn73753811,0,5,5
+B: has files in the latest Synapse snapshot,34a6d25c-1e94-4a92-8d55-33ede5b4aa93,Ast10_Communication,The Cell-cell Signaling Drives a Pathologic Astrocytic State Linked to Cognitive Decline in Alzheimer’s Study (Ast10_Communication),syn64778720,0,757,757
+B: has files in the latest Synapse snapshot,4593e6dd-d1cc-4ce3-9b9b-0032eed8b3a8,BD2_MSSM,The Dissection of Bipolar Disorder Pathophysiology Through Integration of Human Brain Multi-Omics (BD2_MSSM) Study,syn75942205,0,1622,1622
+B: has files in the latest Synapse snapshot,d665e8d0-d16e-4193-a94d-d4de68e3106c,BD2_MSSM_Reprocessed,The Reprocessed Data for The Dissection of Bipolar Disorder Pathophysiology Through Integration of Human Brain Multi-Omics (BD2_MSSM_Reprocessed) Study,syn77308644,0,88,88
+B: has files in the latest Synapse snapshot,de283249-ff66-41d4-89ab-b8421bc247e6,Brain_CASCADE_CAA_Pilot,The Brain CASCADE Cerebral Amyloid Angiopathy Pilot (Brain_CASCADE_CAA_Pilot) Study,syn75350531,0,0,10932
+B: has files in the latest Synapse snapshot,933ac314-1854-4267-9f1d-64136a0bb6eb,BU_ADRC_circPDE4B,BU ADRC circPDE4B Downregulation Associated with GEMIN5-Dependent Translational Stress and Autophagy in MAPT Pathology (BU_ADRC_circPDE4B) ,syn74323579,0,27,27
+B: has files in the latest Synapse snapshot,7aab0330-c405-48eb-8977-e34103fd8116,CUIMC2_Mult,The CUIMC2 Multiome snRNA/snATAC Study (CUIMC2_Mult),syn64769520,0,2394,2394
+B: has files in the latest Synapse snapshot,e1e7a240-73c2-41a1-bfea-9cc71eeb4684,DivCo_HS,The Diverse Cohorts Harmonization Study,syn68898203,0,12715,12715
+B: has files in the latest Synapse snapshot,10d6b09a-27ae-4c8b-9bcc-22457cc03e8e,Emory_Healthy_Brain_Study,Emory Healthy Brain Study (Emory_Healthy_Brain_Study),syn75102930,0,259,259
+B: has files in the latest Synapse snapshot,27951f54-60e7-439c-8cea-d1314050e921,FunGen-xQTL,FunGen-xQTL,syn68872643,0,930,930
+B: has files in the latest Synapse snapshot,667870d9-7408-438f-b0ba-d58071b6131d,Jax.IU.Pitt_APOE4.Trem2.R47H,The Jax.IU.Pitt_APOE4.Trem2.R47H Study (Jax.IU.Pitt_APOE4.TREM2.R47H),syn66318364,0,503,503
+B: has files in the latest Synapse snapshot,f3c39d38-1b75-40d7-8d8b-31b86d8e806c,Jax.IU.Pitt_B6.Klotho,The Jax.IU.Pitt_B6.Klotho Study (Jax.IU.Pitt_B6.Klotho),syn73812454,0,106,106
+B: has files in the latest Synapse snapshot,3aab0e3c-0439-4bcb-81bb-c039dc5b7279,Jax.IU.Pitt_LOAD1.PrimaryScreen,The Jax.IU.Pitt_LOAD1.PrimaryScreen Study (Jax.IU.Pitt_LOAD1.PrimaryScreen),syn21595258,0,94,94
+B: has files in the latest Synapse snapshot,06e89d67-51cc-4a0c-8ab0-3f8283298074,Jax.IU.Pitt_LOAD2.StrainValidation,The MODEL-AD LOAD2.StrainValidation Study (Jax.IU.Pitt_LOAD2.StrainValidation),syn68527429,0,271,271
+B: has files in the latest Synapse snapshot,b3f4fcd7-d581-4dfd-9c79-8dd088d1f5e4,Jax.IU.Pitt_TREM2.HSSvsR47H,The Jax.IU.Pitt_TREM2.HSSvsR47H Study (Jax.IU.Pitt_TREM2.HSSvsR47H),syn73853757,0,180,180
+B: has files in the latest Synapse snapshot,3bea99ff-5546-4bf0-96ab-6de8c698fab6,mCITE-Seq,The Development of a Human Microglia-specific CITE-Seq Panel Study,syn64695340,0,974,974
+B: has files in the latest Synapse snapshot,df507b88-b340-4f9b-9ee5-823861172025,MODEL-AD_RNAseq_Harmonization,The MODEL-AD RNAseq Harmonization Study (MODEL-AD_RNAseq_Harmonization),syn25882591,0,2948,2948
+B: has files in the latest Synapse snapshot,390f19ef-c16b-4261-a3fc-bf3228fc8ef9,MSBB_ROSMAP_AD_resilience,The MSBB and ROSMAP Cohort AD Resilience  Study (MSBB_ROSMAP_AD_resilience),syn52676457,0,347,347
+B: has files in the latest Synapse snapshot,bd5b8ac6-ced4-4f46-b985-57d43ffcc5e1,MSSM_PsychAD,The Mount Sinai PsychAD Study (MSSM_PsychAD),syn52160016,0,2240,2240
+B: has files in the latest Synapse snapshot,771220da-5b96-45b8-a878-40d2aaadc387,PAK1-5xFAD,TREAT-AD - PAK1 Inhibitor 5xFAD (PAK1-5xFAD) Study,syn69936886,0,8,8
+B: has files in the latest Synapse snapshot,216526b7-853b-4719-91a7-b6ac7d3f2377,ROSMAP-Non-lesionalMS,Human disease-specific cell signatures in non-lesional tissue in Multiple Sclerosis detected by single-cell and spatial transcriptomics (ROSMAP-Non-lesionalMS),syn53213846,0,0,181
+B: has files in the latest Synapse snapshot,9113be25-959d-4a88-92c4-205b0f394eb6,ROSMAP_GAGE-seq,The ROSMAP GAGE-seq study (ROSMAP_GAGE-seq),syn66400203,0,579,579
+B: has files in the latest Synapse snapshot,41c396f8-2c77-4d12-8a98-0193bc7cf3be,ROSMAP_Proteoform,The Propagation of Shared Functional Changes Across Cellular Networks  (ROSMAP_Proteoform) Study,syn52050305,0,17,17
+B: has files in the latest Synapse snapshot,1a60e467-7d4a-4629-a7bf-137c7a9adf93,UCI_ABI3,The UCI_ABI3 study (UCI_ABI3),syn26943727,0,436,436
+B: has files in the latest Synapse snapshot,bd621e48-e32f-4f95-889c-614574392f7d,UCI_Clu-h2kbKI,The UCI_Clu-h2kbKI Study,syn65941765,0,230,230
+B: has files in the latest Synapse snapshot,f086fde8-d042-4aab-9801-e0c36e36115c,Zhao_USF_Study,The DNA N6-methyladenine (6mA) Methylome of Alzheimer’s disease Study (ZhaoUSFStudy),syn71830130,0,7,7
+C: acronym no longer in Synapse study list,7976442f-e88a-4b19-a9bd-12fe87dc5e66,ADRC_circAD,The Boston University Alzheimer’s Disease Research Center circular RNAs Study,,0,0,0
