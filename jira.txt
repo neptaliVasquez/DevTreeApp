@@ -1,93 +1,39 @@
-[Catalog] Sage sync that waits for a study's file list so that researchers can keep requesting access to Sage datasets that have data
+Subject: Sage sync fix tested in DIS dev on 7 October: all checks passed
 
-Environment:
-Prod, ADWB tenant (discover.alzheimersdata.org). Service: Catalog Dataset Discovery Service, SAGE syndication job calling DIS dis-prod. Both problems are in the code for every environment. Workspace and browser: not applicable (background sync, daily 03:00 UTC).
+We tested the fix for the Sage datasets problem in the DIS dev environment today. All five checks passed. The Catalog side is tested next, in staging.
 
-Steps to reproduce:
-Problem A, a file list that is not ready is read as empty:
-1. Run the SAGE sync while DIS needs more than 5 seconds to build a study's file list, or after a DIS restart. DIS then answers GET /api/dis/v1/catalog/metadata/status with HTTP 202 and no "files".
-2. Let the sync finish and open that dataset in the catalog.
+What we tested, what came back, and the result
 
-Problem B, nobody is told when a Sage entry stops arriving:
-1. Have a published Sage dataset in the Catalog whose study is not in the list DIS returns. Today that is ADMC_ADNI_NightingaleNMR, which is no longer in the Synapse studies table (syn17083367).
-2. Let the nightly SAGE sync run.
+The Sage study list responds.
+Output: HTTP 200. In production this call has returned an error (500) every night since 1 October.
+Result: passed.
 
-Expected:
-A. HTTP 202 means "not ready". The Catalog retries, and if the list is still not ready it skips the study for that night and leaves the existing dataset unchanged.
-B. After each SAGE sync, the Catalog emails a configured list of recipients the Sage datasets that are published in the Catalog but were not in that night's feed from DIS, so they can be removed by hand.
-- Each entry shows name, acronym, catalog ID, Synapse ID and whether it has a Request access button.
-- The email repeats each night until the entries are removed.
-- No email is sent when there are no such entries.
-- No email is sent when the sync failed or DIS returned no studies, so a broken night cannot produce a "remove everything" list.
-- Recipients are configurable per environment.
+Studies with no files are left out.
+Output: 163 studies returned. Synapse lists 201 today and 38 have no files, so 163 is the expected number.
+Result: passed.
 
-Actual:
-A. The Catalog reads the 202 as an empty file list. A new dataset is published with no dataLink and no Request access button. An existing dataset has all its attributes replaced, so its dataLink and its permission entry on the storage container are removed; the next successful sync creates a new container.
-B. The entry stays published and unchanged, with its Request access button if it had one. Nobody is notified.
+The right studies are in and the empty ones are out.
+Output: PAK1-5xFAD and DivCo_HS are in the list. AUSBB, TREATAD_BV2, iNeuron_shRNA_transcriptome and the "Nominated Targets for Agora" entries are not.
+Result: passed.
 
-Evidence:
-Problem A:
-- DataInteropServiceClient.GetMetadataStatusAsync has no 202 handling. GetStudiesStatusAsync, in the same file, throws a retryable ServerErrorException on 202.
-- DataInteropServiceConnector.GetDataDictionaries waits 5 seconds, then returns metadataResult?.Files?.FileList ?? []. Its Retry helper only retries on ServerErrorException.
-- SyndicationProcessor.CreateAndUploadDataPackage sets no dataLink when the file list is empty.
-- CatalogueEntity.UpdateAttributes replaces the whole attribute set. SyndicationImportService.ProcessPublishDataLinkAsync removes the container permission when the previous dataLink exists and the new one is null.
-- dis-prod console logs, 14 days to 2026-10-07: catalog/metadata/status returned 200 about 2,000 times and 202 a few times.
-- Found by code review. No affected dataset has been identified yet.
+A dataset that looked empty now has its files.
+Output: 8 files returned for PAK1-5xFAD. With the old Synapse snapshot it had none, which is why it has no Request access button in production.
+Result: passed.
 
-Problem B:
-- SyndicationImportService matches on externalId and only creates or updates. Nothing removes or flags a Sage entry that stops arriving.
-- Already stale today: four datasets are published with a Request access button but are no longer in the Synapse studies table.
-  - ADMC_ADNI_NightingaleNMR (9225426c-093f-4c9a-a938-7f41ce08e57a)
-  - ADMC_ADNI_BakerLipidomics (15f74016-0dac-4517-9ca1-03b235869a48)
-  - ADMC_ADNI_UHawaiiGutMetabolites (20da65ab-f121-45d7-bb6f-51092e16fc44)
-  - ADMC_ADNI_Biocrates_MxP_Q500 (4e126322-558e-43fa-9097-c769b4a75771)
-- Will become stale: Jax.IU.Pitt_Verubecestat_5XFAD (syn21863375, catalog ID 8aefb85b-dd35-4254-934b-799d3f30feae) has 30 files in Synapse snapshot 73 and none in snapshot 88. It has a Request access button today and will keep it after DIS stops sending it.
-- Measured in prod on 2026-10-07 16:43 UTC with POST /dsds/api/v1/entities/datasets?catalogName=SAGE, logged in: 199 Sage datasets, 61 with no dataLink.
-- Scale once the DIS fix is live on snapshot 88: about 37 Sage entries will be in the Catalog but not in the feed (30 with no files in any snapshot, 2 with no files in snapshot 88, the 4 stale ones and the one above).
-- The repo already has a notification module (GRIP.Common.Notification) and scheduled email reports (KeycloakRegisteredUsersReport, SubmitAccessRequestReminder), which may be reusable. Not reviewed in detail.
+DIS reads the newest Synapse snapshot by itself, and logs what it left out.
+Output: the log shows Data metadata snapshot: syn11346063.88 and Omitted 38 studies with no files, with the 38 names.
+Result: passed.
 
-No correlation ID available.
+One problem found and fixed during testing
 
+The first run returned 146 studies instead of 163. DIS was reusing a study list from September 2025 that ships with the code, for the first 24 hours after each deploy. We fixed that in the same branch and re-ran the test, which gave 163.
 
+Not tested yet, because it needs staging
 
-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+The Request access button appearing in the Catalog for PAK1-5xFAD and DivCo_HS after the nightly sync.
+One real access request for a Sage dataset.
+Not covered by this fix
 
-[API] DIS Sage study list that completes and leaves out studies with no files so that researchers can request access to every Sage dataset they see
-Environment:
-Prod, ADWB tenant (discover.alzheimersdata.org). Service: DIS, container app dis-prod, release v1.1.8-hdruk-only. Workspace and browser: not applicable (background sync, daily 03:00 UTC).
+Datasets with no data that are already in the Catalog are not removed automatically. Support needs to remove about 37 of them once the fix is live in production.
 
-Steps to reproduce:
-Problem A, the sync fails:
-1. Have a study in the Synapse studies table (syn17083367) with an empty studyFocus cell. Today that is Brain_CASCADE_Proteinopathies (syn75350766).
-2. Let the Catalog's nightly SAGE sync run, or start a studies job with GET /api/dis/v1/catalog/studies?providerId=sage and, once it completes, call GET /api/dis/v1/catalog/studies/status?providerId=sage&jobToken=<token>&format=GRIP.
-
-Problem B, studies with no files are published:
-1. Pick a Sage study with no files in the Synapse file table (syn11346063), for example AUSBB (syn69831812), TREATAD_BV2 (syn70984637) or iNeuron_shRNA_transcriptome (syn70991365).
-2. Let the nightly SAGE sync run and open the dataset in the AD Discovery Catalog.
-3. Delete the dataset from the catalog and wait for the next sync.
-
-Expected:
-A. DIS returns the study list. A study with no disease focus is returned without datasetDiseases.
-B. DIS leaves a Sage study out of the list it serves to the Catalog while the study has no files. A deleted dataset stays deleted, and the study appears on the first sync after it gets files.
-
-Actual:
-A. DIS returns HTTP 500 for every page of the study list. The Catalog retries 12 times and the sync fails, so Sage datasets are not added or refreshed.
-B. The dataset is published with no dataLink, so it has no Request access button. After deletion, the next sync creates it again with a new ID.
-
-Evidence:
-Problem A:
-- dis-prod console logs: catalog/studies/status returned 500 on every day from 2026-10-01 to 2026-10-07 (22, 12, 10, 12, 46, 22, 12 calls).
-- In the three days to 2026-10-07, DIS received no catalog/metadata calls at all, so nothing was imported.
-- The job that builds the list completes normally ("Enriched 201/201 rows", "Studies enrichment COMPLETED").
-- Reproduced locally with the production mapper and the live studies table (201 rows): TypeError "the JSON object must be str, bytes or bytearray, not NoneType". With that one row removed, the other 200 studies map.
-- Code: code/backend/providers/sage/catalog_plugin.py, _map_sage_to_grip, json.loads(row.get("studyFocus", "[]")).
-
-Problem B:
-- Support deleted four datasets and all four came back with new IDs: "WashingtonUniSaintLouis_Harari_AUSBB_version1", "TREAT-AD_iNeuron_shRNA_transcriptome_study_1", "TREAT-AD_BioHyV_Study", "TREAT-AD - PAK1 Inhibitor 5xFAD Study".
-- File counts in Synapse: AUSBB, TREATAD_BV2 and iNeuron_shRNA_transcriptome have 0 files in every snapshot checked. PAK1-5xFAD has 8 files in snapshot 88 (2026-09-09) and 0 in snapshot 73, so its result depends on the SYNAPSE_DATA_METADATA_VERSION configured in prod.
-- Scale: of 201 studies in Synapse on 2026-10-07, 38 have no files in snapshot 88 and 67 in snapshot 73. Nine are Agora entries ("... Nominated Targets for Agora", "Agora Data Processing").
-- DIS: _map_sage_to_grip returns every study in the studies table.
-- Catalog: SyndicationProcessor.CreateAndUploadDataPackage imports every study and sets dataLink only when the file list is not empty. SyndicationImportService matches on externalId and creates a new record when none matches. Nothing removes a record that stops arriving.
-- The earlier fix (PR #145, AB#4005) filters GET /api/dis/v1/catalog/datasets, which the nightly sync never calls.
-
-No correlation ID available.
+Next step
