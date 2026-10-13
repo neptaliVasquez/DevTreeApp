@@ -1,1 +1,136 @@
-https://grip-research.atlassian.net/browse/GRP-5924
+[Catalog] [DIS] HDR UK syndication: production rollout and push close-out
+
+Background
+
+Follow-up to GRP-5924. That ticket's "Pull on production" config tasks were completed by
+PR 3250 (merged to main on 12 October), which added the HDRUK syndication entry to
+cfg/environments/adwblive.yaml and the HDRUK seed data to seeds/adwb. Everything else on
+GRP-5924 is carried over here.
+
+Two things are merged but not yet in production:
+
+- Catalog: PR 3250 is not in a release. The latest tag, gde-1.5.59 (8 October), predates it.
+- DIS: production deploys only from v* tags. The latest, v1.1.8-hdruk-only (24 September),
+  does not include the 9 October cleanup (#165), which rewrote the grip-hdruk plugin and
+  added a migration.
+
+Scope and tasks
+
+1. Pull on production (roll out and verify)
+
+[ ] Create hdruk-personal-access-token-live in the production Key Vault (GRIP-owned vault)
+[ ] Ship PR 3250 in the next Catalog release
+[ ] Confirm the seed upgrade runs for the production org, so the HDRUK catalogue, entity
+    templates and syndication mapping are applied
+[ ] Confirm DIS production has the hdruk provider row and its personal access token secret
+[ ] Confirm the daily cron (03:00 UTC) ingests HDR UK studies into the production catalogue
+
+2. Push on staging (close out)
+
+[ ] Check outliers (5 entities from production) in HDR UK logs, for more possible details
+[ ] Verify the issue with Job history not showing up on the HDR UK Preprod UI (seen 12 October)
+[ ] Review the push-placeholders-for-business-review.md placeholders. Priority:
+    observationDate and startDate, which are currently a fabricated 2026-01-01.
+    Blocked on the business decision below; needs a DIS code change once answered.
+
+3. Push on production
+
+[ ] Cut a DIS production release that includes the 9 October cleanup (#165)
+[ ] Confirm the production GRIP service credential for DIS exists
+    (GRIP-SYSTEM-CLIENT-ID-prod and its secret, in grip-dis-keyvault-shared).
+    NEXT-STEPS.md lists it as "not yet requested" as of 21 September.
+[ ] Confirm whether the predefined integration is already registered in HDR UK production
+    (team 172). The DIS docs say it is not; GRP-5924 said "rerun".
+[ ] Run the predefined integration in the HDR UK production environment and check the result
+
+4. Documentation
+
+[ ] Update docs/SOWs/HDRUK/NEXT-STEPS.md, which still says adwblive.yaml has no HDRUK entry
+
+Decisions needed (not engineering)
+
+Business: confirm or replace the placeholder values the push sends.
+
+Acceptance criteria
+
+- Production pulls the ADDI collection into GRIP daily, with entities visible in the catalogue.
+- HDR UK preprod (staging) and the production Gateway each harvest DIS successfully, with no
+  errors against HDRUK/4.0.0/4.1.0.
+- All secrets configured: hdruk-personal-access-token-live in the GRIP production vault, and
+  the production GRIP service credential in the DIS vault.
+
+References
+
+GRP-5924; Catalog PR 3250; in the DIS repo: docs/SOWs/HDRUK/NEXT-STEPS.md,
+IMPLEMENTATION-PLAN.md §5, hdruk-predefined-integration-setup.md,
+push-placeholders-for-business-review.md, docs/Providers/HDRUK/README.md
+
+
+---------------------------------------------------------------------------------
+[Catalog] [DIS] Finalise HDR UK 2-way syndication testing
+
+Background
+
+ADDI exchanges dataset metadata with the HDR UK Innovation Gateway in both directions
+through DIS:
+
+- Pull (HDR UK → GRIP): the hdruk provider fetches the ADDI collection (Gateway id 143) and
+  maps it to GRIP format. GRIP's syndication cron then ingests it.
+- Push (GRIP → HDR UK): the grip-hdruk provider serves level-0 datasets ("Local data access",
+  ADWB catalogue). HDR UK's federation harvester pulls them on its own schedule.
+
+Scope change (13 October)
+
+This ticket now covers only the pull direction: verifying it on staging and adding the
+production configuration. The push close-out, the production push, and verifying the pull
+in production after release have moved to GRP-XXXX.
+
+Scope and tasks
+
+1. Pull on staging (finish and verify)
+
+[x] Confirm the daily cron actually ingests HDR UK studies into the staging catalogue
+
+2. Pull on production
+
+[x] Add an HDRUK entry to syndication: in cfg/environments/adwblive.yaml, with
+    api_url: https://dis-prod.alzheimersdata.org/api/ and
+    detail_page_url: https://healthdatagateway.org/en/dataset
+[x] Set api_token_secret_name: hdruk-personal-access-token-live, and add it to the
+    environment's secrets list
+[x] Add the HDRUK seed data to seeds/adwb (syndication mapping, hdruk entity templates,
+    HDRUK catalogue), copied from the staging seed (adwb-hybrid)
+
+Delivered in Catalog PR 3250, merged to main on 12 October. Tested with YAML/JSON parse
+checks only; it has not been run against a live environment.
+
+When deploying
+
+[ ] Create hdruk-personal-access-token-live in the production Key Vault (GRIP-owned vault)
+[ ] Confirm the seed upgrade runs for the production org, so the new catalogue and mapping
+    are applied
+[ ] Confirm DIS production has the hdruk provider row and its personal access token secret
+
+Moved to GRP-XXXX
+
+- Push on staging: the 5 outlier entities in HDR UK logs, the Job history issue on the
+  HDR UK Preprod UI (seen 12 October), and the placeholder review
+- Push on production: running the predefined integration in HDR UK production
+- Confirming production ingests HDR UK studies daily after the release
+- Business decision on the placeholder values the push sends
+
+Acceptance criteria
+
+- Staging pulls the ADDI collection into GRIP daily, with entities visible in the catalogue.
+- The production configuration for the HDR UK pull (syndication entry, secret reference and
+  seed data) is merged to main.
+
+The original criteria for production pulling daily, HDR UK harvesting DIS without
+HDRUK/4.0.0/4.1.0 errors, and all secrets being configured are carried by GRP-XXXX.
+
+References
+
+Catalog PR 3250; follow-up GRP-XXXX; in the DIS repo: docs/SOWs/HDRUK/NEXT-STEPS.md,
+IMPLEMENTATION-PLAN.md §5, docs/Providers/HDRUK/README.md
+
+
