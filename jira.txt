@@ -1,88 +1,25 @@
-[Catalog] [DIS] Finalise HDR UK 2-way syndication testing
+Hi Stephen, Loki and Eoghan,
 
-Status: Done. Remaining work moved to <NEW TICKET>.
+I'm Neptali Vasquez, and I'm taking over the ADDI side of the HDR UK integration from Calina.
 
-Background
-ADDI exchanges dataset metadata with the HDR UK Gateway in both directions through DIS:
-- Receiving / pull (HDR UK → ADWB): the hdruk provider fetches the ADDI collection (Gateway id 143, 9 datasets); the Catalog's nightly syndication cron ingests it.
-- Sending / push (ADWB → HDR UK): the grip-hdruk provider serves level-0 datasets (ADWB catalogue, "Local data access"); HDR UK's harvester collects them daily.
+Calina's last update said 13 of our datasets kept failing. The cause was on our side, and the fix went live on 15 October. That day's run on your production Gateway was clean: our team now has 107 active datasets and 0 archived.
 
-Done in this ticket
-Pull
-[x] Staging: the nightly cron ingests the 9 HDR UK datasets into the staging catalogue (Catalog PR 2893, 8 Sep; DIS #163, 8 Oct).
-[x] Seed data for HDR UK datasets: catalogue, dataset template and syndication mapping (Catalog PR 3161 for grip, PR 3219 for adwb-hybrid).
-[x] Production config and seed data for ADWB live (Catalog PR 3250, merged 12 Oct): HDRUK syndication entry in cfg/environments/adwblive.yaml (api_url https://dis-prod.alzheimersdata.org/api/, api_token_secret_name hdruk-personal-access-token-live) plus the HDR UK catalogue, dataset template and mapping in the adwb seeds.
-    Not released yet: no Catalog production release (gde-1.5.59 or earlier) includes it.
+What we fixed:
 
-Push
-[x] grip-hdruk provider live on staging; HDR UK test-site integration (federation 92, team 154) harvesting dis-staging.
-[x] Production integration created on HDR UK (team 172, 23 Sep); 94 of 107 datasets synced.
-[x] Cleanup and docs (DIS #165, 9 Oct), including removal of the fake sample-data fallback (on main/staging only).
+The 13 failing datasets. For datasets whose category we couldn't map, our feed left out the dataset type, so your translation step rejected them. We now always send a dataset type, and all 13 were created.
+Edits not reaching the Gateway. Your harvester updates a dataset only when its version number changes, and ours never did. Our version number now changes whenever the content does. The last part of the number is a content fingerprint, not a counter, e.g. 1.0.669184. Because of this change, every dataset was updated once on 15 October.
+"An unexpected error occurred while updating dataset" on preprod. When your harvester requested all our datasets at once, our feed was too slow and some requests hit the 30-second timeout. A full run now gets every response within about 11 seconds.
+You don't need to do anything for these fixes. On days when nothing has changed, we expect no new History entry.
 
-Moved to <NEW TICKET>
-- Production outliers (actually 13 datasets, not 5)
-- Missing History entries on the HDR UK test site (12 Oct)
-- Placeholder review
-- Production rerun and releases
- --------------------------------------------------------------
+Your ADDI collection now appears on our test site. We'll let you know when it is live on AD Workbench.
 
+For our next meeting, I'd like to cover:
 
-
-
-Note: The data dictionary for this dataset is not available from the catalog. Notify the data owner if possible. 
- 
-As a result, you will not see dataset variable name tool-tip help during this session.
- 
-Button Name: Please Continue
-
-[Catalog] [DIS] HDR UK syndication: fix sync failures and release to production
-
-Background
-Investigation on 14–15 Oct found three push bugs and one pull bug in DIS. All four are fixed in DIS PR #168 (merged 15 Oct, live on staging). Production still runs DIS v1.1.8-hdruk-only (24 Sep) and needs a release.
-
-Done (DIS PR #168, proven on staging 15 Oct)
-[x] 13 production datasets never created on HDR UK (same 13 since 24 Sep). Cause: DIS omitted the provenance section when no datasetTypes value mapped, and HDR UK's GWDM 2.0 translation rejects that. Fix: always send provenance, falling back to "Health and disease / Others". Proof: a staging test dataset with no data type was created on the HDR UK test site.
-[x] Edits never reaching HDR UK. Cause: HDR UK only updates when the listing version changes, and ours was always 1.0.0. Fix: version patch = fingerprint of the published content. Proof: renaming the test dataset in the staging ADWB Catalog updated the same dataset on the HDR UK test site.
-[x] Random "An unexpected error occurred while updating dataset" on the HDR UK test site. Cause: on cache expiry, every parallel harvester request fetched the whole GRIP catalogue at once and passed HDR UK's 30 s timeout. Fix: 15-minute cache shared across requests and worker processes. Proof: 24 parallel requests went from 10 failed or over 30 s to 24 OK in about 6 s; test-site runs since then are clean.
-[x] Missing History entries (12 Oct) explained: HDR UK records nothing for a run where no dataset was created, updated or failed. Not a bug on our side.
-[x] Pull: "Request access" links to HDR UK datasets returned 404. Fix: link by the Gateway's numeric dataset id. Verification below.
-[x] Dev tool scripts/dev/hdruk-validate (replays records through HDR UK's schemas and translation); HDR UK docs updated.
-
-Staging (verify)
-[ ] Pull links work after the 03:00 UTC import. May take two nights: DIS reuses an import for 24 h.
-[ ] Next 2–3 daily HDR UK test-site runs complete with no errors.
-
-Production
-[ ] DIS production release: v* tag from main (includes #163–#168).
-[ ] HDR UK production run (team 172): the 13 datasets created, the other 94 refreshed once, History clean.
-[ ] Catalog production release that includes PR 3250 (https://dev.azure.com/global-research-platforms/GRIP/_git/Catalog/pullrequest/3250); not in gde-1.5.59 or earlier. Confirm hdruk-personal-access-token-live exists in the Catalog live vault first.
-[ ] The 9 HDR UK datasets appear in the live ADWB Catalog with working "Request access" links.
-
-Follow-ups (DIS, small)
-[ ] Lower HDRUK_SYNC_TTL_HOURS from 24 to 12 (data_providers.hdruk.provider_config). The nightly import currently reuses the previous day's result about half the time.
-[ ] Drop the dangling "Access data at:" text sent to HDR UK when a dataset has no external link.
-
-Security and access
-[ ] Rotate GRIP-HDRUK-FEDERATION-API-KEY (shared in plain text by email and in a repo report), then update the Authorisation Token in HDR UK's UI for the test and live integrations.
-[ ] Grant Neptali access to grip-dis-keyvault-shared and the DIS staging logs.
-
-Decisions needed (Kelly / Matt)
-[ ] accessLevel for the 9 pulled HDR UK datasets: today "AD Data Initiative Hosted"; recommend "Partner Hosted (Full Access)" or "Other".
-[ ] Accept "Health and disease" as the fallback category for datasets we can't classify.
-[ ] Placeholder values in push-placeholders-for-business-review.md. Priority: observationDate and startDate (fabricated 2026-01-01).
-
-HDR UK (next meeting)
-[ ] Introduce Neptali as the new contact; confirm their pending release.
-[ ] Ask which schema/translation version their test and live sites run.
-[ ] Suggest: check the listing version before fetching each record; show no-change runs in History.
-[ ] Report: on update they store the listing summary as the dataset's original metadata.
-
-Acceptance criteria
-- Every dataset in the DIS listing exists on the HDR UK Gateway (production: 107 of 107), with no failed runs over 3 consecutive days (test site and production).
-- An edit in the ADWB Catalog appears on HDR UK after the next run.
-- Staging and live ADWB Catalogs show the 9 HDR UK datasets, refreshed nightly, with working "Request access" links.
-- Federation API key rotated.
-
-References
-DIS PR #168 (https://github.com/Global-Research-Platforms/data-interop-service/pull/168); Catalog PR 3250 (https://dev.azure.com/global-research-platforms/GRIP/_git/Catalog/pullrequest/3250)
-
+My access to both teams (154 test, 172 live).
+When your pending release goes live, so we can recheck after it.
+Two suggestions for the harvester:
+check the version number before downloading each dataset;
+show runs with no changes in History.
+A possible bug: when a dataset is updated, the saved "original" record seems to be the short summary rather than the full record.
+Thanks for your help so far,
+Neptali
