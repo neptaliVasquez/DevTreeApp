@@ -26,6 +26,15 @@ Moved to <NEW TICKET>
 - Production rerun and releases
  --------------------------------------------------------------
 
+
+
+
+Note: The data dictionary for this dataset is not available from the catalog. Notify the data owner if possible. 
+ 
+As a result, you will not see dataset variable name tool-tip help during this session.
+ 
+Button Name: Please Continue
+
 [Catalog] [DIS] HDR UK syndication: fix sync failures and release to production
 
 Background
