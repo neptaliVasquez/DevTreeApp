@@ -23,3 +23,15 @@ show runs with no changes in History.
 A possible bug: when a dataset is updated, the saved "original" record seems to be the short summary rather than the full record.
 Thanks for your help so far,
 Neptali
+
+
+HDR UK sync update (16 Oct): today's errors are nothing to worry about
+
+Today's HDR UK run (sending ADWB → HDR UK) showed errors on 4 datasets. No data was lost or is wrong:
+
+What happened: every day, HDR UK downloads all our datasets again to check for changes. For 4 of them the download failed, most likely because it took too long. Those 4 hadn't changed, so HDR UK's Gateway still shows exactly the right content for them.
+What I checked:
+Afterwards, our service answered all 109 datasets in under 11 seconds; HDR UK's limit is 30.
+A manual rerun produced no new errors. HDR UK's log only records runs where something changed, so a clean rerun leaves no entry.
+Good news from the same run: 2 new ADWB datasets appeared on HDR UK automatically, MAUCO Cohort study and the Oxford Parkinson's Disease Centre cohort. That makes 109 in total.
+Next: I'll keep watching the daily runs. If these slow downloads happen again, there's a small improvement we can include in the next release.
