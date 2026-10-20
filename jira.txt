@@ -1,37 +1,39 @@
 Hi Stephen, Loki and Eoghan,
 
-I'm Neptali Vasquez, and I'm taking over the ADDI side of the HDR UK integration from Calina.
+Thanks for today's call. As promised, here are the details of the points we discussed. All line references are to gateway-api release 2.56.0.
 
-Calina's last update said 13 of our datasets kept failing. The cause was on our side, and the fix went live on 15 October. That day's run on your production Gateway was clean: our team now has 107 active datasets and 0 archived.
+1. Cache the API key for the run
 
-What we fixed:
+Today: every dataset job reads our API key from Google Secret Manager.
+UpdateFederatedDatasetJob creates a new GoogleSecretManagerService (line 48), whose constructor creates a new SecretManagerServiceClient (line 22).
+determineAuthType then calls getSecret, which has no caching (lines 331–341).
+With 110 datasets, a run reads the secret about 111 times.
+Why it matters: in the failed runs since 16 October, the requests for the failed datasets never reached our server.
+Reading the key is the only remote call a dataset job makes before calling us.
+A brief Secret Manager error inside updateFederatedDataset would produce exactly the "unexpected error" in History.
+The client is created outside the try/catch, so a failure there would end the job with no History entry, which is what happened on 19 October.
+Suggestion: read the key once per run and cache it briefly (for example in the app cache, keyed by federation). Passing it inside the job payload would store it in the queue.
+2. Retry a failed dataset once
 
-The 13 failing datasets. For datasets whose category we couldn't map, our feed left out the dataset type, so your translation step rejected them. We now always send a dataset type, and all 13 were created.
-Edits not reaching the Gateway. Your harvester updates a dataset only when its version number changes, and ours never did. Our version number now changes whenever the content does. The last part of the number is a content fingerprint, not a counter, e.g. 1.0.669184. Because of this change, every dataset was updated once on 15 October.
-"An unexpected error occurred while updating dataset" on preprod. When your harvester requested all our datasets at once, our feed was too slow and some requests hit the 30-second timeout. A full run now gets every response within about 11 seconds.
-You don't need to do anything for these fixes. On days when nothing has changed, we expect no new History entry.
+Today: UpdateFederatedDatasetJob and CreateFederatedDatasetJob set $tries = 1 (line 26). updateFederatedDataset also catches every Throwable, records the History message and returns (lines 322–325), so raising $tries alone wouldn't help.
+Suggestion: retry inside the try before recording a failure: for example Http::retry(2, 1000) on the request (line 218) and a retry around the key lookup. Today a failed dataset waits for the next daily run.
+3. Show runs with no changes in History
 
-Your ADDI collection now appears on our test site. We'll let you know when it is live on AD Workbench.
+Today: History and "Last run" are built only from FederationJobRun rows (lines 74 and 89).
+Those rows are written only when a dataset is created, updated or fails.
+An unchanged dataset only writes a log line (line 279).
+The success email is also skipped when nothing changed (line 49).
+Result: a clean run with no changes leaves no visible trace (no History entry, no "Last run" update, no email). From our side it looks the same as a run that never happened.
+Suggestion: record one entry per run, for example "Completed, no changes".
+4. Possible bug: the "original" record saved on update
 
-For our next meeting, I'd like to cover:
+updateFederatedDataset passes $data, the item from our list endpoint, as the third argument of updateMetadataVersion (lines 298–302). That function saves it as original_metadata (line 127).
+After an update, the stored original is therefore the short list summary rather than the full record downloaded from us. It may be intended, but it's worth a check.
+For reference, the runs to look up (the log line "encountered internal error while UPDATING dataset" shows the real error):
 
-My access to both teams (154 test, 172 live).
-When your pending release goes live, so we can recheck after it.
-Two suggestions for the harvester:
-check the version number before downloading each dataset;
-show runs with no changes in History.
-A possible bug: when a dataset is updated, the saved "original" record seems to be the short summary rather than the full record.
-Thanks for your help so far,
+Production: 79cc5938-a697-44ab-96c0-f6652d8e5e09 (16 Oct), 197bb7e1-deb5-4bd3-bb73-d08912cd2a9a (17 Oct), 7bd9e1e1-14a4-4b10-9e2f-d7d396dc6c7f (19 Oct, no History entry; please check the failed jobs list)
+Preprod: 4c606088-4a81-46c4-9718-f12b2e146ab4 (17 Oct), 5806db02-a6df-453e-aef1-d29222674ec8 (18 Oct), 799ad162-adeb-4df1-8686-dcbefc9c8456 (19 Oct)
+If you make any of these changes, we're happy to help test on preprod, which collects from our staging environment.
+
+Best regards,
 Neptali
-
-
-HDR UK sync update (16 Oct): today's errors are nothing to worry about
-
-Today's HDR UK run (sending ADWB → HDR UK) showed errors on 4 datasets. No data was lost or is wrong:
-
-What happened: every day, HDR UK downloads all our datasets again to check for changes. For 4 of them the download failed, most likely because it took too long. Those 4 hadn't changed, so HDR UK's Gateway still shows exactly the right content for them.
-What I checked:
-Afterwards, our service answered all 109 datasets in under 11 seconds; HDR UK's limit is 30.
-A manual rerun produced no new errors. HDR UK's log only records runs where something changed, so a clean rerun leaves no entry.
-Good news from the same run: 2 new ADWB datasets appeared on HDR UK automatically, MAUCO Cohort study and the Oxford Parkinson's Disease Centre cohort. That makes 109 in total.
-Next: I'll keep watching the daily runs. If these slow downloads happen again, there's a small improvement we can include in the next release.
